@@ -7,18 +7,20 @@ import org.redisson.config.TransportMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Redis 核心配置
+ */
 @Configuration
 public class RedissonConfig {
-
     /**
      * 单节点模式
-     *
-     * @return
      */
     @Bean("redissonClientV1")
     public RedissonClient redissonClientV1(){
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+        config.useSingleServer()
+                .setAddress("redis://127.0.0.1:6379")
+                .setPassword("redis368.cn");
         // 设置编码
         //config.setCodec(new JsonJacksonCodec());
         // 线程数量，默认值: CPU核数 * 2
@@ -40,8 +42,6 @@ public class RedissonConfig {
 
     /**
      * 哨兵模式
-     *
-     * @return
      */
     /*@Bean("redissonClientV2")
     public RedissonClient redissonClientV2(){
@@ -55,8 +55,6 @@ public class RedissonConfig {
 
     /**
      * 主从模式
-     *
-     * @return
      */
     /*@Bean("redissonClientV3")
     public RedissonClient redissonClientV3(){

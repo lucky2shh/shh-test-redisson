@@ -96,23 +96,32 @@ public class TestDistributedLock {
         RedissonRedLock redLock = new RedissonRedLock(lock, lock2, lock3);
         // 同时加锁lock、lock2、lock3，大部分节点加锁成功就算加锁成功。
         redLock.lock();
-        // 业务操作
+        // 业务操作...
+        // 最终解锁
         redLock.unlock();
     }
 
     /**
      * 读写锁 ReadWriteLock
+     *
+     * 获取到读锁后，不能再次获取写锁。
+     * 获取到写锁后，可以再次获取读锁。
      */
     @Test
     public void testReadWriteLock(){
         RReadWriteLock readWriteLock = redisson.getReadWriteLock("test:lock:ReadWriteLock");
-        readWriteLock.readLock().lock();
-        // 业务操作
-        readWriteLock.readLock().unlock();
 
         readWriteLock.writeLock().lock();
-        readWriteLock.writeLock().unlock();
+        System.out.println("获取写锁成功。");
 
+        readWriteLock.readLock().lock();
+        System.out.println("获取读锁成功。");
+
+        readWriteLock.writeLock().unlock();
+        System.out.println("释放写锁成功。");
+
+        readWriteLock.readLock().unlock();
+        System.out.println("释放读锁成功。");
     }
 
     /**
@@ -121,19 +130,19 @@ public class TestDistributedLock {
     @Test
     public void testSemaphore() throws InterruptedException {
         RSemaphore semaphore = redisson.getSemaphore("test:Semaphore");
-        semaphore.acquire();
-        //或
-        semaphore.acquireAsync();
-        semaphore.acquire(23);
+
+        // 获取信号量
+        semaphore.acquire();    // 同步阻塞
+        semaphore.acquireAsync();   // 异步非阻塞
+        semaphore.acquire(23);  // 固定超时时间内同步阻塞
         semaphore.tryAcquire();
-        //或
         semaphore.tryAcquireAsync();
         semaphore.tryAcquire(23, TimeUnit.SECONDS);
-        //或
         semaphore.tryAcquireAsync(23, TimeUnit.SECONDS);
+
+        // 释放信号量
         semaphore.release(10);
         semaphore.release();
-        //或
         semaphore.releaseAsync();
     }
 

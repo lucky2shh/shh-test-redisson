@@ -1,10 +1,14 @@
 package cn.shh.test.redisson.distributedcollection;
 
 import org.junit.jupiter.api.Test;
+import org.redisson.RedissonDelayedQueue;
 import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.sound.midi.Soundbank;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式集合
@@ -32,7 +36,9 @@ public class TestDistributedCollection {
         map.fastPutAsync("k6", "v6");
         map.fastRemoveAsync("k6");
 
-        System.out.println("map: " + map);
+        map.forEach((k, v) -> {
+            System.out.println(k + " : " + v);
+        });
     }
 
     /**
@@ -44,18 +50,19 @@ public class TestDistributedCollection {
         map.put("k1", "v1");
         map.put("k2", "v2");
         map.put("k3", "v3");
-        RSet<String> getResult = map.get("k1");
-        for (String s : getResult) {
-            System.out.println("s: " + s);
-        }
+        map.keySet().forEach(k -> System.out.println("map: " + map.get(k)));
+
         RListMultimap<String, String> map2 = redisson.getListMultimap("test-listmultimap");
         map2.put("k1", "v1");
         map2.put("k2", "v2");
         map2.put("k3", "v3");
+        map2.keySet().forEach(k -> System.out.println("map2: " + map2.get(k)));
+
         RSetMultimapCache<String, String> multimap = redisson.getSetMultimapCache("test-setmultimapcache");
         multimap.put("k1", "v1");
         multimap.put("k2", "v2");
         multimap.put("k3", "v3");
+        multimap.keySet().forEach(k -> System.out.println("multimap: " + multimap.get(k).getName()));
     }
 
     /**
@@ -140,8 +147,8 @@ public class TestDistributedCollection {
         queue.add("a");
         queue.add("b");
         queue.add("c");
-        System.out.println(queue.peek());
-        System.out.println(queue.poll());
+        System.out.println(queue.peek());   // 返回的同时不删除元素
+        System.out.println(queue.poll());   // 返回的同时删除元素
     }
 
     /**
@@ -170,6 +177,8 @@ public class TestDistributedCollection {
         queue.add(3);
         queue.add(1);
         queue.add(2);
+        System.out.println(queue);
         System.out.println(queue.poll());
+        System.out.println(queue);
     }
 }

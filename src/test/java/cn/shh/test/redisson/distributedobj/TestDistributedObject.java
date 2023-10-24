@@ -40,7 +40,7 @@ public class TestDistributedObject {
         map.put("k3", new String("v3"));
         RBuckets rBuckets = redissonClient.getBuckets();
         // 保存所有对象，有一个失败，其它的都放弃。
-        //rBuckets.trySet(map);
+        // rBuckets.trySet(map);
         // 保存所有对象。
         rBuckets.set(map);
 
@@ -49,7 +49,6 @@ public class TestDistributedObject {
         mapResult.forEach((k, v) -> {
             System.out.println("k/v: " + k + "/" + v);
         });
-
     }
 
     /**
@@ -234,7 +233,7 @@ public class TestDistributedObject {
     @Test
     public void testRateLimiter(){
         RRateLimiter rateLimiter = redissonClient.getRateLimiter("test-ratelimiter");
-        // 初始化，最大流速 = 每1秒钟产生3个令牌
+        // 初始化，最大流速 = 每1秒钟产生2个令牌
         rateLimiter.trySetRate(RateType.OVERALL, 2, 1, RateIntervalUnit.SECONDS);
 
         for (int i = 0; i < 10; i++) {
